@@ -1,12 +1,10 @@
 import { Router } from "express";
+import { asyncHandler } from "../middleware/asyncHandler";
+import { getUsers, getUser } from "../controllers/users.controller";
+
 const router = Router();
 
-router.get("/", (req, res) => {
-  res.json([{ id: 1, name: "Tom" }]);
-});
-
-router.post("/", (req, res) => {
-  res.json({ ok: true });
-});
+router.get("/", asyncHandler(getUsers));
+router.get("/:id", asyncHandler(getUser));
 
 export default router;
