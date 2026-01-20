@@ -1,4 +1,5 @@
 import { supabaseAdmin } from "../lib/supabaseAdmin";
+import { supabaseClient } from "../lib/supabaseClient";
 import { createProfile } from "./profile.service";
 
 export type SignupInput = {
@@ -34,4 +35,20 @@ export async function signup(input: SignupInput) {
   }
 
   return { userId };
+}
+
+export async function login(input: { email: string; password: string }) {
+  console.log(supabaseClient,'supabaseClient')
+  const { data, error } = await supabaseClient.auth.signInWithPassword(input);
+
+  if (error || !data.session) {
+    throw new Error(error?.message ?? "Login failed");
+  }
+
+  // access_token / refresh_token 둘 다 필요 (새로고침 유지의 핵심)
+  return {
+    accessToken: data.session.access_token,
+    refreshToken: data.session.refresh_token,
+    expiresIn: data.session.expires_in, // seconds
+  };
 }
